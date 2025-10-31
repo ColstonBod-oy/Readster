@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.container, MainFragment.newInstance(imageUri))
                     .commitNow();
         } else {
+            Toast.makeText(this, "Image capture cancelled", Toast.LENGTH_SHORT).show();
             finish();
         }
     }

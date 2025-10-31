@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.colstech.readster.Assets;
 import com.colstech.readster.Config;
+import com.colstech.readster.MainActivity;
 import com.colstech.readster.databinding.FragmentMainBinding;
 
 import java.io.IOException;
@@ -67,29 +68,25 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Bitmap bitmap = null;
         try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
             binding.image.setImageBitmap(bitmap);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        binding.start.setOnClickListener(v -> {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-                viewModel.recognizeImage(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        binding.stop.setOnClickListener(v -> {
-            viewModel.stop();
+        if (bitmap != null) {
+            viewModel.recognizeImage(bitmap);
+        }
+
+        binding.captureAgain.setOnClickListener(v -> {
+            ((MainActivity) requireActivity()).takePicture();
         });
         binding.text.setMovementMethod(new ScrollingMovementMethod());
 
         viewModel.getProcessing().observe(getViewLifecycleOwner(), processing -> {
-            binding.start.setEnabled(!processing);
-            binding.stop.setEnabled(processing);
+            binding.captureAgain.setEnabled(!processing);
         });
         viewModel.getProgress().observe(getViewLifecycleOwner(), progress -> {
             binding.status.setText(progress);

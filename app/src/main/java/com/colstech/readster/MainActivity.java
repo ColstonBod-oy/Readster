@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void takePicture() {
+    public void takePicture() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, MainFragment.newInstance(imageUri))
                     .commitNow();
+        } else {
+            finish();
         }
     }
 }

@@ -29,26 +29,12 @@
             android:textStyle="bold"
             tools:text="Status" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/capture_again"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="Start" />
-
-            <Button
-                android:id="@+id/stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="Stop" />
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:text="Capture Again" />
 
     </LinearLayout>
 
@@ -59,6 +45,6 @@
         android:layout_weight="1"
         android:padding="16dp"
         android:scrollbars="vertical"
-        android:text="" />
+        android.text="" />
 
 </LinearLayout>

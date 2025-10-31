@@ -8,5 +8,4 @@ public class Config {
 
 	public static final String TESS_LANG = "eng";
 
-	public static final String IMAGE_NAME = "sample.jpg";
 }

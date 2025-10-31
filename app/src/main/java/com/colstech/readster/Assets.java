@@ -2,11 +2,8 @@ package com.colstech.readster;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,16 +30,6 @@ public class Assets {
         return getLocalDir(context).getAbsolutePath();
     }
 
-    @NonNull
-    public static File getImageFile(@NonNull Context context) {
-        return new File(getLocalDir(context), Config.IMAGE_NAME);
-    }
-
-    @Nullable
-    public static Bitmap getImageBitmap(@NonNull Context context) {
-        return BitmapFactory.decodeFile(getImageFile(context).getAbsolutePath());
-    }
-
     public static void extractAssets(@NonNull Context context) {
         AssetManager am = context.getAssets();
 
@@ -56,22 +43,11 @@ public class Assets {
             throw new RuntimeException("Can't create directory " + tessDir);
         }
 
-        // Extract our assets to local directory.
-        // Note we don't use am.list() to get list of all assets, because we wouldn't know which
-		// files are ours and which were added by other libraries
         String[] filesToExtract = new String[]{
                 "eng.traineddata",
-                "sample.jpg",
         };
         for (String assetName : filesToExtract) {
-            final File targetFile;
-
-            // Put all *.traineddata into "tessdata" subdirectory, other files into root.
-            if (assetName.endsWith(".traineddata")) {
-                targetFile = new File(tessDir, assetName);
-            } else {
-                targetFile = new File(localDir, assetName);
-            }
+            final File targetFile = new File(tessDir, assetName);
             if (!targetFile.exists()) {
                 copyFile(am, assetName, targetFile);
             }

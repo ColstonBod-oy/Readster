@@ -1,6 +1,7 @@
 package com.colstech.readster.ui.main;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -11,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-import java.io.File;
 import java.util.Locale;
 
 public class MainViewModel extends AndroidViewModel {
@@ -74,7 +74,7 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    public void recognizeImage(@NonNull File imagePath) {
+    public void recognizeImage(@NonNull Bitmap image) {
         if (!tessInit) {
             Log.e(TAG, "recognizeImage: Tesseract is not initialized");
             return;
@@ -92,34 +92,17 @@ public class MainViewModel extends AndroidViewModel {
 
         // Start process in another thread
         new Thread(() -> {
-            tessApi.setImage(imagePath);
-            // Or set it as Bitmap, Pix,...
-            // tessApi.setImage(imageBitmap);
+            tessApi.setImage(image);
 
             // Set page segmentation mode (default is PSM_SINGLE_BLOCK)
             tessApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);
 
             long startTime = SystemClock.uptimeMillis();
 
-            // Use getHOCRText(0) method to trigger recognition with progress notifications and
-            // ability to cancel ongoing processing.
             tessApi.getHOCRText(0);
 
-            // At this point the recognition has completed (or was interrupted by calling stop())
-            // and we can get the results we want. In this case just normal UTF8 text.
-            //
-            // Note that calling only this method (without the getHOCRText() above) would also
-            // trigger the recognition and return the same result, but we would received no progress
-            // notifications and we wouldn't be able to stop() the ongoing recognition.
             String text = tessApi.getUTF8Text();
 
-            // Alternatively we can get resulting text filtered based on confidence threshold.
-            // Note this call internally calls getResultIterator() which means we need to call
-            // getHOCRText or getUTF8Text method before to make sure there are results to process.
-            //String text = tessApi.getConfidentText(40, TessBaseAPI.PageIteratorLevel.RIL_WORD);
-
-            // We can free up the recognition results and any stored image data in the tessApi
-            // if we don't need them anymore.
             tessApi.clear();
 
             // Publish the results
@@ -136,7 +119,6 @@ public class MainViewModel extends AndroidViewModel {
             synchronized (recycleLock) {
                 tessProcessing = false;
 
-                // Recycle the instance here if the view model is already destroyed
                 if (recycleAfterProcessing) {
                     tessApi.recycle();
                 }

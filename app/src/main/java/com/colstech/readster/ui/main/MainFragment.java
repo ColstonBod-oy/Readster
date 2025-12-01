@@ -4,7 +4,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.method.ScrollingMovementMethod;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,8 @@ import com.colstech.readster.MainActivity;
 import com.colstech.readster.databinding.FragmentMainBinding;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainFragment extends Fragment {
 
@@ -83,7 +88,7 @@ public class MainFragment extends Fragment {
         binding.captureAgain.setOnClickListener(v -> {
             ((MainActivity) requireActivity()).takePicture();
         });
-        binding.text.setMovementMethod(new ScrollingMovementMethod());
+        binding.text.setMovementMethod(LinkMovementMethod.getInstance());
 
         viewModel.getProcessing().observe(getViewLifecycleOwner(), processing -> {
             binding.captureAgain.setEnabled(!processing);
@@ -92,7 +97,28 @@ public class MainFragment extends Fragment {
             binding.status.setText(progress);
         });
         viewModel.getResult().observe(getViewLifecycleOwner(), result -> {
-            binding.text.setText(result);
+            setClickableText(result);
         });
+    }
+
+    private void setClickableText(String text) {
+        SpannableString spannableString = new SpannableString(text);
+        Pattern pattern = Pattern.compile("\\w+");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            String word = text.substring(start, end);
+
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    DefinitionDialogFragment.newInstance(word).show(getParentFragmentManager(), "definition");
+                }
+            };
+            spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        binding.text.setText(spannableString);
     }
 }

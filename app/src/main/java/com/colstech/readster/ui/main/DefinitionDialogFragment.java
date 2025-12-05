@@ -1,9 +1,11 @@
 package com.colstech.readster.ui.main;
 
 import android.app.Dialog;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -12,6 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.colstech.readster.R;
 
 import org.json.JSONArray;
@@ -48,11 +55,15 @@ public class DefinitionDialogFragment extends DialogFragment {
         TextView wordText = view.findViewById(R.id.word_text);
         TextView definitionText = view.findViewById(R.id.definition_text);
         ProgressBar loadingProgress = view.findViewById(R.id.loading_progress);
+        
+        ImageView wordImage = view.findViewById(R.id.word_image);
+        ProgressBar imageLoadingProgress = view.findViewById(R.id.image_loading_progress);
+        TextView imageErrorText = view.findViewById(R.id.image_error_text);
 
         String word = getArguments().getString(ARG_WORD);
         wordText.setText(word);
 
-        fetchDefinition(word, definitionText, loadingProgress);
+        fetchDefinition(word, definitionText, loadingProgress, wordImage, imageLoadingProgress, imageErrorText);
 
         builder.setView(view)
                 .setPositiveButton("Close", (dialog, id) -> dismiss());
@@ -60,7 +71,8 @@ public class DefinitionDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    private void fetchDefinition(String word, TextView definitionView, ProgressBar progressBar) {
+    private void fetchDefinition(String word, TextView definitionView, ProgressBar progressBar, 
+                                 ImageView wordImage, ProgressBar imageLoadingProgress, TextView imageErrorText) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             String result = null;
@@ -106,6 +118,29 @@ public class DefinitionDialogFragment extends DialogFragment {
                             definitions.append("\n");
                         }
                         definitionView.setText(definitions.toString());
+
+                        imageLoadingProgress.setVisibility(View.VISIBLE);
+                        wordImage.setVisibility(View.VISIBLE);
+                        Glide.with(this)
+                                .load("https://loremflickr.com/320/240/" + word)
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        imageLoadingProgress.setVisibility(View.GONE);
+                                        wordImage.setVisibility(View.GONE);
+                                        imageErrorText.setVisibility(View.VISIBLE);
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        imageLoadingProgress.setVisibility(View.GONE);
+                                        imageErrorText.setVisibility(View.GONE);
+                                        return false;
+                                    }
+                                })
+                                .into(wordImage);
+
                     } catch (JSONException e) {
                         definitionView.setText("Definition not found.");
                     }

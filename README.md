@@ -3,6 +3,8 @@
 An app that scans texts from books and instantly provides definitions. It uses [Tesseract4Android OCR](https://github.com/adaptech-cz/Tesseract4Android).  
 Definitions are fetched from [Free Dictionary API](https://dictionaryapi.dev/) and images are fetched from [LoremFlickr](https://loremflickr.com/).  
 
+📖 Try it on Android — download the APK here: https://github.com/ColstonBod-oy/Readster/releases
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/16f54913-da9d-4f25-b61d-bc486fa8cda7" width="30%" />
   <img src="https://github.com/user-attachments/assets/aae630c6-0a3d-426f-ac3f-bcbd460d52a9" width="30%" />

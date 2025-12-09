@@ -1,6 +1,6 @@
 # Readster
 
-An app that scans texts from books and instantly provides definitions and a reference image. It uses [Tesseract4Android OCR](https://github.com/adaptech-cz/Tesseract4Android).  
+An app that scans texts from books and instantly provides definitions. It uses [Tesseract4Android OCR](https://github.com/adaptech-cz/Tesseract4Android).  
 Definitions are fetched from [Free Dictionary API](https://dictionaryapi.dev/) and images are fetched from [LoremFlickr](https://loremflickr.com/).  
 
 <p align="center">
